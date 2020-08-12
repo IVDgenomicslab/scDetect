@@ -1,0 +1,163 @@
+---
+title: "scDetect-Introduction"
+output: html_document
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Introduction to scPred}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Summary
+
+[scDetect](https://github.com/IVDgenomicslab/scDetect/) is a new cell type ensemble learning classification method for single-cell RNA sequencing across different data platforms, using a combination of gene expression rank-based method and majority vote ensemble machine-learning probability-based prediction method.
+
+To further accurate predict the tumor cells in the single cell RNA-seq data, we developed scDetect-Cancer, a classification framework which incorporated the cell copy number information and epithelial origin information in the classification.
+
+## Application of scDetect
+
+First, we load the [scDetect](https://github.com/IVDgenomicslab/scDetect/) package, and [Seurat](https://satijalab.org/seurat/install.html)
+
+```{r load_package, echo=TRUE, eval=FALSE}
+library("scDetect")
+library("Seurat")
+```
+
+We will work with single cell data from two human pancreas dataset. "Muraro" dataset were generated from CEL-Seq2 platform, "Xin" dataset were generated from SMARTer platform.
+
+The count matrix and cell type lable of the test data could be obtained [here](https://github.com/IVDgenomicslab/scDetect/tree/master/test_data).
+
+Read the gene expression data and cell type lable.
+
+```{r read_data_xin, echo=TRUE, eval=FALSE}
+# Xin human pancreas dataset #
+xin<-counts(xin_test)
+xin_lable<-xin_test$label
+
+```
+
+
+```{r read_data_muraro, echo=TRUE, eval=FALSE}
+# Muraro human pancreas dataset #
+muraro<-counts(muraro_test)
+muraro_lable<-muraro_test$label
+```
+
+#### Prediction
+
+To make scDetect easy to use, all steps were integrated into one function -- scDetect. 
+
+Here, we used Muraro pancreas dataset as the training dataset to predcit the cell types in Xin pancreas dataset. 
+
+
+```{r prediction, echo=TRUE, eval=FALSE}
+# Using Muraro dataset as the training dataset #
+# Prediction #
+prediction_results<-scDetect(vali_set_matrix = xin, train_set_matrix = muraro, train_set_lable = muraro_lable,p_value=0.2)
+```
+
+We can obtain a table showing the prediction results and detailed inforamtion.
+
+The prediction results of scDetect included four columns:
+
+predict_lable: Predicted cell type of the highest predict_score cell type;
+
+predict_score: Highest predict score of the corresponding cell type;
+
+pvalue: p value of the predict score based on the permutation analysis;
+
+final_predict_lable: Predicted cell type based on the predict score and pvalue.
+
+
+```{r prediction_results, echo=TRUE, eval=FALSE}
+prediction_results[1:20,]
+```
+
+Evaluate the prediction results.
+```{r evaluate, echo=TRUE, eval=FALSE}
+evaluate_results<-evaluate(xin_lable,prediction_results$final_predict_lable)
+
+```
+
+Accuracy of the cell type prediction results.
+```{r accuracy, echo=TRUE, eval=FALSE}
+#Accuracy
+evaluate_results$Acc
+```
+
+Confusion matrix of the cell type prediction results.
+```{r confusion_matrix, echo=TRUE, eval=FALSE}
+#Confounding matrix
+evaluate_results$Conf
+```
+
+## Application of scDetect-Cancer
+
+For the single cell RNA-seq data of the tumor samples. First, we load the [scDetect](https://github.com/IVDgenomicslab/scDetect/) package, and [Seurat](https://satijalab.org/seurat/install.html)
+
+```{r load, echo=TRUE, eval=FALSE}
+library("scDetect")
+library("Seurat")
+```
+
+We will work with single cell data from a test melanoma dataset. 
+
+The count matrix and cell type lable of the test data could be obtained [here](https://github.com/IVDgenomicslab/scDetect/tree/master/test_data).
+
+Read the gene expression data and cell type lable.
+
+```{r read_data_cancer, echo=TRUE, eval=FALSE}
+# Melanoma reference dataset #
+mela_ref<-counts(melanoma_ref)
+mela_ref_lable<-melanoma_ref$label
+
+# Melanoma test dataset #
+mela_test<-counts(melanoma_test)
+```
+
+#### Prediction
+
+To make scDetect-Cancer easy to use, all steps were integrated into one function -- scDetect-Cancer. 
+
+Here, we used Melanoma reference dataset (without tumor cells) as the training dataset to predcit the cell types in a melanoma test dataset. 
+
+The gene position file used for single cell copy number variation analysis and gene list file used for epithelial score analysis could be obtained [here](https://github.com/IVDgenomicslab/scDetect/tree/master/scDetect-Cancer-file).
+
+Create temporary directory.
+
+```{r tempdir, echo=TRUE, eval=FALSE}
+# Create temporary directory #
+output_dir<-tempdir()
+```
+
+```{r prediction_cancer, echo=FALSE, eval=FALSE}
+# Prediction #
+scDetect_Cancer_results<-scDetect_Cancer(vali_set_matrix = mela_test, train_set_matrix = mela_ref, train_set_lable = mela_ref_lable, gene_position_file, gene_list, output_dir)
+```
+
+We can obtain a list included the prediction results and detailed inforamtion.
+
+The prediction results:
+
+```{r scDetect_Cancer_results, echo=TRUE, eval=FALSE}
+scDetect_Cancer_results$lable[1:10]
+```
+
+The detailed inforamtion:
+
+
+```{r scDetect_Cancer_results_detail, echo=TRUE, eval=FALSE}
+scDetect_Cancer_results$detail_info[1:10,]
+```
+
+
+```{r}
+sessionInfo()
+```
