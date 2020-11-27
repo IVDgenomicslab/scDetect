@@ -5,6 +5,12 @@ To further accurate predict the tumor cells in the single cell RNA-seq data, we 
 
 This [scDetect introduction](https://ivdgenomicslab.github.io/scDetect-Introduction/) shows a basic workflow for cell type prediction.
 
+scDetect required the package "rJava". You can install the package as follows:
+
+```markdown
+install.packages("rJava") 
+```
+
 You can install scDetect via devtools as follows:
 
 ```markdown
