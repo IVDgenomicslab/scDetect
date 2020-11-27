@@ -12,7 +12,7 @@ install.packages("rJava")
 library(rJava)
 ```
 
-You can install scDetect via devtools as follows:
+Then you can install scDetect via devtools as follows:
 
 ```markdown
 devtools::install_github("IVDgenomicslab/scDetect")
