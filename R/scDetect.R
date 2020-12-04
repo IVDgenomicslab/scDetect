@@ -101,10 +101,10 @@ getFeature<-function(train_set_matrix,train_set_lable){
 
 
 
-######################################################################
-#get cutoff value #cutoff two Intermediate cell type# cutoff unknown#
+#######################################################################
+#get cutoff value #cutoff two Intermediate cell type# cutoff unknown##
 #get unknown cut off based on permutation#
-######################################################################
+#######################################################################
 #' @title Get cutoff value for scDetect
 #' @description Get Intermediate-type cutoff value and Unknown cell type cutoff value based on permutation for the scDetect score.
 #' @param train_set_matrix A matrix object with genes as rows and cells as columns.
