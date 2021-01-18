@@ -816,7 +816,7 @@ get_cnv_score<-function(data_matrix,gene_position_file,anno_file_input,output_di
   out_dir<-paste(output_dir,"\\infercnv\\",sep="")
   infercnv_obj_default = infercnv::run(
     infercnv_obj,
-    cutoff=1, # cutoff=1 works well for Smart-seq2, and cutoff=0.1 works well for 10x Genomics
+    cutoff=1,
     out_dir=out_dir,
     cluster_by_groups=TRUE,
     plot_steps=FALSE,
